@@ -1,6 +1,6 @@
 FROM wiremock/wiremock
 
 COPY ./ /home/wiremock
-CMD [ "--enable-stub-cors=true" ]
+CMD [ "--enable-stub-cors=true", "--port=8089" ]
 
-EXPOSE 8080
+EXPOSE 8089
