@@ -1,0 +1,7 @@
+# Svelte
+
+https://github.com/microsoft/vscode-dev-containers/tree/main/containers/vue[microsoft/vscode-dev-containers/containers/vue/]をベースにSvelteように一部書き換えた。
+
+https://kit.svelte.jp/[sveltekit]でsampleプロジェクトを作成した状態。
+
+/.vscode/tasks.jsonは未編集。
