@@ -8,6 +8,9 @@
 - java 11
 - maven
 - docker
+- https://gauge.org/[gauge]
+- IntelliJ
+- VsCode
 
 ## 起動方法
 
@@ -29,10 +32,18 @@ npm run dev
 [source, sh]
 ----
 cd e2e
-mvn test
+mvn clean test
 ----
+
+IntelliJにGaugeプラグインを入れると、UIからテスト実行も可能
+
+## 構成
+- front: SvelteKit Typescript (VsCodeで編集)
+- API: Wiremock(あとで変える予定)
+- E2E: Gauge Kotlin (IntelliJで編集)
 
 ## TODO
 - APIを作成する
 - envをK8sにする
 - Daggerでパイプラインを構築する
+- CDC化
