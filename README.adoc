@@ -4,13 +4,13 @@
 タスク管理アプリでデモを実施
 
 ## 必要なツール
-- node 16
-- java 11
-- maven
+- node: v18.12.1
+- java: 11
+- maven: 3.8.6
 - docker
-- https://gauge.org/[gauge]
-- IntelliJ
-- VsCode
+- https://gauge.org/[gauge: 1.4.3] & java plugin: 0.9.1
+- IntelliJ IDEA 2022.2.3 (Community Edition)
+- VsCode: 1.73.1
 
 ## 起動方法
 
@@ -22,10 +22,19 @@ cd env/task-api
 ----
 
 ### front
+localで起動
 [source, sh]
 ----
 cd front/app
 npm run dev
+----
+
+またはDockerで起動
+[source, sh]
+----
+cd front/
+docker build . -t task-front:latest
+docker run -it --rm -p 3000:3000 task-front:latest
 ----
 
 ### e2e
