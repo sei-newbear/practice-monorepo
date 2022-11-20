@@ -20,7 +20,7 @@
 
     {#each tasks.tasks as task}
         <div class="task">
-            {task.id}: {task.title}
+            <span class="id">{task.id}</span>: <span class="title">{task.title}</span>
         </div>
     {/each}
 </div>
