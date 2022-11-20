@@ -1,0 +1,16 @@
+{
+    "request": {
+        "method": "GET",
+        "url": "/tasks/1"
+    },
+    "response": {
+        "status": 200,
+        "jsonBody": {
+            "id": 1,
+            "title": "test title1"
+        },
+        "headers": {
+            "content-type": "application/json"
+        }
+    }
+}
