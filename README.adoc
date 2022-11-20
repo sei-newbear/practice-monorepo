@@ -3,6 +3,35 @@
 ## タスク管理アプリ
 タスク管理アプリでデモを実施
 
+## 必要なツール
+- node 16
+- java 11
+- maven
+- docker
+
+## 起動方法
+
+### env
+[source, sh]
+----
+cd env/task-api
+./run_api_mock.sh
+----
+
+### front
+[source, sh]
+----
+cd front/app
+npm run dev
+----
+
+### e2e
+[source, sh]
+----
+cd e2e
+mvn test
+----
+
 ## TODO
 - APIを作成する
 - envをK8sにする
