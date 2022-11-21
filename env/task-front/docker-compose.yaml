@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  front:
+    build:
+      context: ../../front
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+
+
+  api:
+    build:
+      context: ../task-api
+      dockerfile: Dockerfile
+    ports:
+      - 8089:8089

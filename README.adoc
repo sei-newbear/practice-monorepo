@@ -7,14 +7,15 @@
 - node: v18.12.1
 - java: 11
 - maven: 3.8.6
-- docker
+- docker: 20.10.17
+- docker-compose: 1.29.2
 - https://gauge.org/[gauge: 1.4.3] & java plugin: 0.9.1
 - IntelliJ IDEA 2022.2.3 (Community Edition)
 - VsCode: 1.73.1
 
 ## 起動方法
 
-### env
+### APIの起動
 [source, sh]
 ----
 cd env/task-api
@@ -37,7 +38,7 @@ docker build . -t task-front:latest
 docker run -it --rm -p 3000:3000 task-front:latest
 ----
 
-### e2e
+### e2e実行
 [source, sh]
 ----
 cd e2e
@@ -50,6 +51,27 @@ IntelliJにGaugeプラグインを入れると、UIからテスト実行も可�
 - front: SvelteKit Typescript (VsCodeで編集)
 - API: Wiremock(あとで変える予定)
 - E2E: Gauge Kotlin (IntelliJで編集)
+
+## Tips
+
+### docker-composeを用いて起動する方法
+
+#### frontとAPIをまとめて起動
+
+[source, sh]
+----
+cd env/task-front
+docker-compose up -d
+
+----
+
+#### e2e実行
+[source, sh]
+----
+cd e2e
+mvn clean test
+----
+
 
 ## TODO
 - APIを作成する
