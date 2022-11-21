@@ -5,7 +5,7 @@ import com.thoughtworks.gauge.Step
 class Tasks {
     @Step("タスク一覧画面を開く")
     fun openTasksPage(){
-        open("http://localhost:3000")
+        open("/")
     }
 
     @Step("ページタイトル<title>が表示されていること")

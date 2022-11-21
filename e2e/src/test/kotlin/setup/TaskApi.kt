@@ -1,8 +1,10 @@
+package setup
+
 import com.github.tomakehurst.wiremock.client.WireMock
 import java.io.File
 
 class TaskApi {
-    private val taskApi = WireMock("localhost", 8089)
+    private val taskApi = WireMock(Config.config[Config.taskApi.host], Config.config[Config.taskApi.port])
 
     fun setup(){
         this.javaClass.classLoader.getResource("setup/task_api")?.let{
