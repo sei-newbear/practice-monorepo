@@ -1,0 +1,30 @@
+# TaskAPI
+
+## APIの起動
+[source, sh]
+----
+go run main.go
+----
+
+または `main.go` をVsCodeで開き、`F5`キーを押す
+
+
+## デバッガーのインストール
+[source, sh]
+----
+go get -u -v github.com/derekparker/delve/cmd/dlv
+----
+
+## サンプルリクエスト
+[source, sh]
+----
+$ curl localhost:8089/ping
+{"message":"pong"}
+
+$ curl localhost:8089/v1/tasks 
+{"tasks":[{"id":1,"title":"title1"},{"id":3,"title":"title3"}]
+
+$ curl -XPOST localhost:8089/v1/tasks -H 'content-type:application/json' -d '{"title":"request1"}'
+{"id":1,"title":"request1"}
+----
+
