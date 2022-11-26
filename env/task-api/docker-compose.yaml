@@ -1,0 +1,27 @@
+version: '3.7'
+
+volumes:
+  task-db-data:
+
+services:
+  api:
+    build:
+      context: ../../task-api
+      dockerfile: Dockerfile
+    ports:
+      - 8089:8089
+    environment:
+        POSTGRES_PASSWORD: task_pw
+        POSTGRES_USER: task_user
+        POSTGRES_DB: task_db
+        POSTGRES_URL: jdbc:postgresql://db:5432/task_db
+
+  db:
+    build: 
+      context: ./deps/task-db/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - task-db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
