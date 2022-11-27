@@ -8,39 +8,51 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RouteTask(engine *gin.Engine) {
-	v1 := engine.Group("/v1")
-	v1.GET("/tasks", getTasks)
-	v1.POST("/tasks", createTask)
+type TaskHandler struct {
+	taskUseCase usecase.TaskUseCase
 }
 
-func getTasks(c *gin.Context) {
-	tasks := usecase.GetTasks()
-	tasksJson := CreateJson(tasks)
+func RouteTask(engine *gin.Engine) {
+	v1 := engine.Group("/v1")
+
+	taskUseCase := usecase.TaskUseCase{}
+	taskHandler := TaskHandler{taskUseCase}
+
+	v1.GET("/tasks", taskHandler.getTasks)
+	v1.POST("/tasks", taskHandler.createTask)
+}
+
+func (taskHandler *TaskHandler) getTasks(c *gin.Context) {
+	tasks := taskHandler.taskUseCase.GetTasks()
+	tasksJson := createTasksJson(tasks)
 	c.JSON(http.StatusOK, gin.H{
 		"tasks": tasksJson,
 	})
 }
 
-func createTask(c *gin.Context) {
+func (taskHandler *TaskHandler) createTask(c *gin.Context) {
 	var rt RequestTaskJson
 	c.Bind(&rt)
 	task := TaskJson{1, rt.Title}
 	c.JSON(200, task)
 }
 
-type TaskJson struct {
-	Id    int    `json:"id"`
-	Title string `json:"title"`
+func createTaskJson(t domain.Task) TaskJson {
+	return TaskJson{t.Id, t.Title}
 }
 
-func CreateJson(ts []domain.Task) []TaskJson {
+func createTasksJson(ts []domain.Task) []TaskJson {
 	var tsj []TaskJson
 
 	for _, v := range ts {
-		tsj = append(tsj, TaskJson{v.Id, v.Title})
+		tsj = append(tsj, createTaskJson(v))
 	}
 	return tsj
+}
+
+type TaskJson struct {
+	Id    int    `json:"id"`
+	Title string `json:"title"`
 }
 
 type RequestTaskJson struct {
