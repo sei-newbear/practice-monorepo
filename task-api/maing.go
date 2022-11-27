@@ -4,6 +4,7 @@ import (
 	"task-api/driver"
 	"task-api/rest"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	_ "github.com/lib/pq"
@@ -11,9 +12,14 @@ import (
 
 func main() {
 	driver.FindTasks()
-	router := gin.Default()
-	rest.RouteHealth(router)
-	rest.RouteTask(router)
+	engine := gin.Default()
+	engine.Use(cors.New(cors.Config{
+		AllowOrigins: []string{
+			"*",
+		},
+	}))
+	rest.RouteHealth(engine)
+	rest.RouteTask(engine)
 
-	router.Run(":8089")
+	engine.Run(":8089")
 }
