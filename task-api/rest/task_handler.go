@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RouteTask(router *gin.Engine) {
-	v1 := router.Group("/v1")
+func RouteTask(engine *gin.Engine) {
+	v1 := engine.Group("/v1")
 	v1.GET("/tasks", getTasks)
 	v1.POST("/tasks", createTask)
 }
