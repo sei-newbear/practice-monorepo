@@ -8,7 +8,6 @@ class Config {
     }
 
     object taskApi : PropertyGroup() {
-        val host by stringType
-        val port by intType
+        val baseUrl by stringType
     }
 }

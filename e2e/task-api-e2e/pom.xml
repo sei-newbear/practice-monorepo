@@ -10,6 +10,7 @@
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <java.version>11</java.version>
         <kotlin.version>1.7.20</kotlin.version>
+        <fuel.version>2.3.1</fuel.version>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
     </properties>
 
@@ -49,6 +50,16 @@
             <artifactId>konfig</artifactId>
             <version>1.6.10.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.kittinunf.fuel</groupId>
+            <artifactId>fuel</artifactId>
+            <version>${fuel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.kittinunf.fuel</groupId>
+            <artifactId>fuel-json</artifactId>
+            <version>${fuel.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-reflect -->
         <dependency>
