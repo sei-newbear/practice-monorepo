@@ -1,6 +1,9 @@
 {
     "words": [
+        "dbname",
         "gonic",
+        "sslmode",
+        "stretchr",
         "usecase"
     ]
 }

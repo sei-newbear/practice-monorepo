@@ -9,28 +9,30 @@ import (
 )
 
 type TaskHandler struct {
-	taskUseCase usecase.TaskUseCase
+	TaskUseCase usecase.TaskUseCase
 }
 
-func RouteTask(engine *gin.Engine) {
-	v1 := engine.Group("/v1")
-
-	taskUseCase := usecase.TaskUseCase{}
-	taskHandler := TaskHandler{taskUseCase}
-
-	v1.GET("/tasks", taskHandler.getTasks)
-	v1.POST("/tasks", taskHandler.createTask)
+func RouteTask(e *gin.Engine, th TaskHandler) {
+	v1 := e.Group("/v1")
+	v1.GET("/tasks", th.getTasks)
+	v1.POST("/tasks", th.createTask)
 }
 
-func (taskHandler *TaskHandler) getTasks(c *gin.Context) {
-	tasks := taskHandler.taskUseCase.GetTasks()
+func (th *TaskHandler) getTasks(c *gin.Context) {
+	ctx := c.Request.Context()
+	tasks, err := th.TaskUseCase.GetTasks(ctx)
+	if err != nil {
+		c.JSON(500, err)
+		return
+	}
+
 	tasksJson := createTasksJson(tasks)
 	c.JSON(http.StatusOK, gin.H{
 		"tasks": tasksJson,
 	})
 }
 
-func (taskHandler *TaskHandler) createTask(c *gin.Context) {
+func (th *TaskHandler) createTask(c *gin.Context) {
 	var rt RequestTaskJson
 	c.Bind(&rt)
 	task := TaskJson{1, rt.Title}

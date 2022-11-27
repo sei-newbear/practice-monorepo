@@ -11,10 +11,7 @@ services:
     ports:
       - 8089:8089
     environment:
-        POSTGRES_PASSWORD: task_pw
-        POSTGRES_USER: task_user
-        POSTGRES_DB: task_db
-        POSTGRES_URL: jdbc:postgresql://db:5432/task_db
+        TASK_DB_DSN: "host=db port=5432 user=task_user password=task_pw dbname=task_db sslmode=disable"
 
   db:
     build: 

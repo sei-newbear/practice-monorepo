@@ -1,9 +1,15 @@
 package usecase
 
-import "task-api/domain"
+import (
+	"context"
+	"task-api/domain"
+	"task-api/port"
+)
 
-type TaskUseCase struct{}
+type TaskUseCase struct {
+	TaskPort port.TaskPort
+}
 
-func (tu TaskUseCase) GetTasks() []domain.Task {
-	return []domain.Task{{Id: 1, Title: "title1"}, {Id: 3, Title: "title3"}}
+func (tu TaskUseCase) GetTasks(ctx context.Context) ([]domain.Task, error) {
+	return tu.TaskPort.FindAll(ctx)
 }
