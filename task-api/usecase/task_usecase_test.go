@@ -25,5 +25,7 @@ func TestTaskUseCase_GetTasks(t *testing.T) {
 	actual, err := target.GetTasks(context.Background())
 
 	assert.Equal(t, actual, []domain.Task{})
-	assert.Nil(t, err)
+	assert.NoError(t, err)
+	mockTaskPort.AssertExpectations(t)
+
 }

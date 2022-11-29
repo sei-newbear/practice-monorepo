@@ -37,7 +37,8 @@ func InitDb() *sql.DB {
 }
 
 func InitTaskHandler() rest.TaskHandler {
-	taskDriver := driver.TaskDriver{DB: InitDb()}
+	// TODO DI Libraryを使いたい
+	taskDriver := &driver.TaskDriverImpl{DB: InitDb()}
 	taskPort := gateway.NewTaskPort(taskDriver)
 	taskUseCase := usecase.TaskUseCase{TaskPort: taskPort}
 	return rest.TaskHandler{TaskUseCase: taskUseCase}

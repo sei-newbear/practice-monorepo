@@ -6,11 +6,15 @@ import (
 	"fmt"
 )
 
-type TaskDriver struct {
+type TaskDriverImpl struct {
 	DB *sql.DB
 }
 
-func (td *TaskDriver) FindAll(ctx context.Context) (res []TaskTable, err error) {
+type TaskDriver interface {
+	FindAll(ctx context.Context) (res []TaskTable, err error)
+}
+
+func (td *TaskDriverImpl) FindAll(ctx context.Context) (res []TaskTable, err error) {
 	query := "SELECT * FROM task"
 	stmt, err := td.DB.PrepareContext(ctx, query)
 	if err != nil {
