@@ -6,26 +6,24 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 type mockTaskPort struct {
-	calls int
-	args  []context.Context
+	mock.Mock
 }
 
-func (m *mockTaskPort) FindAll(ctx context.Context) ([]domain.Task, error) {
-	m.calls++
-	m.args = append(m.args, ctx)
-
-	res := []domain.Task{{}}
-	return res, nil
+func (_m *mockTaskPort) FindAll(ctx context.Context) ([]domain.Task, error) {
+	ret := _m.Called(ctx)
+	return ret.Get(0).([]domain.Task), ret.Error(1)
 }
 
 func TestTaskUseCase_GetTasks(t *testing.T) {
-	mockTaskPort := &mockTaskPort{0, []context.Context{}}
+	mockTaskPort := new(mockTaskPort)
+	mockTaskPort.On("FindAll", context.Background()).Return([]domain.Task{}, nil)
 	target := TaskUseCase{TaskPort: mockTaskPort}
 	actual, err := target.GetTasks(context.Background())
 
-	assert.Equal(t, actual, []domain.Task{{}})
+	assert.Equal(t, actual, []domain.Task{})
 	assert.Nil(t, err)
 }
