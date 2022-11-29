@@ -2,10 +2,10 @@ import com.github.kittinunf.fuel.httpGet
 import com.jayway.jsonpath.JsonPath
 import com.thoughtworks.gauge.Step
 import com.thoughtworks.gauge.datastore.ScenarioDataStore
+import io.kotest.matchers.shouldBe
 import setup.Config
-import kotlin.test.assertEquals
 
-class Tasks {
+class ApiTest {
 
     private fun saveStatusCode(statusCode: Int){
         ScenarioDataStore.put("statusCode", statusCode)
@@ -31,6 +31,10 @@ class Tasks {
         return JsonPath.read(getResponseBody(), jsonpath)
     }
 
+    private fun getJsonBooleanValue(jsonpath: String): Boolean {
+        return JsonPath.read(getResponseBody(), jsonpath)
+    }
+
     private val baseUrl = Config.config[Config.taskApi.baseUrl]
 
     @Step("<endpoint>へGETリクエストする")
@@ -44,7 +48,7 @@ class Tasks {
 
     @Step("ステータスコードが<code>であること")
     fun equalStatusCode(code: Int){
-        getStatusCode() == code
+        getStatusCode() shouldBe code
     }
 
     @Step("<jsonpath>が存在すること")
@@ -54,12 +58,16 @@ class Tasks {
 
     @Step("<jsonpath>の値が<value>であること")
     fun assertJsonEqualValue(jsonpath: String, value: String){
-        assertEquals(value, getJsonValue(jsonpath))
+        value shouldBe getJsonValue(jsonpath)
     }
 
     @Step("<jsonpath>の値が数値の<value>であること")
     fun assertJsonEqualNumberValue(jsonpath: String, value: Long){
-        assertEquals(value, getJsonNumberValue(jsonpath))
+        value shouldBe getJsonNumberValue(jsonpath)
     }
 
+    @Step("<jsonpath>の値が真偽値の<value>であること")
+    fun assertJsonEqualBooleanValue(jsonpath: String, value: Boolean){
+        value shouldBe getJsonBooleanValue(jsonpath)
+    }
 }

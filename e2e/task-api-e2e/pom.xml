@@ -68,6 +68,18 @@
             <version>1.7.21</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-assertions-core-jvm</artifactId>
+            <version>5.5.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-assertions-json</artifactId>
+            <version>5.5.4</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
