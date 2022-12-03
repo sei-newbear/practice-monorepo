@@ -1,5 +1,12 @@
 # TaskAPI
 
+## 依存関連の起動
+[source, sh]
+----
+cd ../env/task-api
+docker-compose -f docker-compose.deps.yaml up -d
+----
+
 ## APIの起動
 [source, sh]
 ----
@@ -8,6 +15,12 @@ go run main.go
 
 または `main.go` をVsCodeで開き、`F5`キーを押す
 
+## APIと依存関係をまとめ起動
+[source, sh]
+----
+cd ../env/task-api
+docker-compose up -d
+----
 
 ## デバッガーのインストール
 [source, sh]

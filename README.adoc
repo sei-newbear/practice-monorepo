@@ -74,7 +74,7 @@ mvn clean test
 
 
 ## TODO
-- APIを作成する
-- envをK8sにする
-- Daggerでパイプラインを構築する
-- CDC化
+* [x] APIを作成する
+* [ ] envをK8sにする
+* [ ] Daggerでパイプラインを構築する
+* [ ] CDC化
