@@ -7,5 +7,4 @@ CREATE TABLE  task (
 
 -- サンプルレコード作成
 INSERT INTO task VALUES(1, 'hoge');
-INSERT INTO task VALUES(2, 'huga');
-INSERT INTO task VALUES(3, 'suga');
+INSERT INTO task VALUES(2, 'fuga');
