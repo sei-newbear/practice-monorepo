@@ -2,6 +2,7 @@
 CREATE TABLE  task (
   id INT,
   title TEXT,
+  created_at TIMESTAMP NOT NULL default current_timestamp,
   PRIMARY KEY (id)
 );
 
