@@ -160,6 +160,7 @@ class TaskDb {
 
     @Step("DB test")
     fun testDb() {
+        println("db test")
         val changes = Changes(source)
         changes.setStartPointNow()
         DatabaseOperation.INSERT.execute(connection, dataSet(getDir("setup/test")!!))

@@ -1,6 +1,8 @@
 package setup
 
+import com.thoughtworks.gauge.AfterScenario
 import com.thoughtworks.gauge.AfterSuite
+import com.thoughtworks.gauge.BeforeScenario
 import com.thoughtworks.gauge.BeforeSuite
 
 @Suppress("unused")
@@ -15,5 +17,16 @@ class RepeatingSetup {
     @AfterSuite
     fun teardown(){
         taskDb.teardown()
+    }
+
+    @BeforeScenario(tags = ["watch-change-data"])
+    fun setupWatchChangeData(){
+        println("data change start")
+    }
+
+
+    @AfterScenario(tags = ["watch-change-data"])
+    fun teardownWatchChangeData(){
+        println("data change end")
     }
 }

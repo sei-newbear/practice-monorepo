@@ -13,7 +13,8 @@
 * "$.tasks[1].title"の値が文字列の"Gaugeについて勉強する"であること
 
 ## DB test
-//TODO DBテストの動作検証中
+//TODO DBテストの動作検証中。残りは変更を検知する仕組みを追加する
+tags: watch-change-data
 * DBが"expect/test1"通りになっていること
 * "task"テーブルを条件"id = 1"で取得した"id"が"1"であること
 * "task"テーブルを条件"id = 1"で取得した"title"が"Kotlinについて調べる"であること
