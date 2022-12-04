@@ -10,4 +10,12 @@ class Config {
     object taskApi : PropertyGroup() {
         val baseUrl by stringType
     }
+
+    object taskDb : PropertyGroup() {
+        val driverClass by stringType
+        val url by stringType
+        val user by stringType
+        val password by stringType
+        val schema by stringType
+    }
 }

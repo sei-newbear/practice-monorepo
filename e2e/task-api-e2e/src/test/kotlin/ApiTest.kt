@@ -1,16 +1,16 @@
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.Request
-import com.github.kittinunf.fuel.core.Response
+import com.github.kittinunf.fuel.core.ResponseResultOf
 import com.github.kittinunf.fuel.httpGet
-import com.github.kittinunf.result.Result
 import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.PathNotFoundException
 import com.thoughtworks.gauge.Step
 import com.thoughtworks.gauge.datastore.ScenarioDataStore
 import io.kotest.matchers.collections.haveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldHave
-import io.kotest.matchers.shouldNotBe
 import setup.Config
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.fail
 
 private const val STATUS_CODE = "statusCode"
 
@@ -34,9 +34,9 @@ class ApiTest {
         return ScenarioDataStore.get(RESPONSE_BODY) as String
     }
 
-    private fun saveResponse(response: Triple<Request, Response, Result<String, FuelError>>) {
+    private fun saveResponse(response: ResponseResultOf<ByteArray>) {
         val statusCode = response.second.statusCode
-        val responseBody = response.third.get()
+        val responseBody = response.second.data.let(::String)
         saveStatusCode(statusCode)
         saveResponseBody(responseBody)
     }
@@ -50,7 +50,7 @@ class ApiTest {
     @Step("<path>へGETリクエストする")
     fun requestGet(path: String){
         val url = "${baseUrl}/${path}"
-        val response = url.httpGet().responseString()
+        val response = url.httpGet().response()
         saveResponse(response)
     }
 
@@ -61,14 +61,21 @@ class ApiTest {
 
     @Step("<jsonpath>が存在すること")
     fun existsJsonpath(jsonpath: String){
-        val jsonValue = getJsonValue(jsonpath)
-        jsonValue shouldNotBe null
+        assertNotNull(getJsonValue(jsonpath), "\"$jsonpath\"")
+    }
+
+    @Step("<jsonpath>が存在しないこと")
+    fun notExistsJsonpath(jsonpath: String){
+        try {
+            val jsonValue = getJsonValue(jsonpath)
+            fail("${jsonpath}は存在します。値: $jsonValue")
+        }catch (_: PathNotFoundException){
+        }
     }
 
     @Step("<jsonpath>がNullであること")
     fun isNullJsonpath(jsonpath: String){
-        val jsonValue = getJsonValue(jsonpath)
-        jsonValue shouldBe null
+        assertNull(getJsonValue(jsonpath), "\"$jsonpath\"")
     }
 
     @Step("<jsonpath>の要素数が<length>であること")
@@ -83,7 +90,7 @@ class ApiTest {
 
     @Step("<jsonpath>の値が文字列の<value>であること")
     fun assertJsonEqualValue(jsonpath: String, value: String){
-        value shouldBe getJsonValue(jsonpath)
+        getJsonValue(jsonpath) shouldBe value
     }
 
     @Step("<jsonpath>の値が整数の<value>であること")
