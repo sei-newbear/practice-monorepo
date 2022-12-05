@@ -1,6 +1,7 @@
 package setup
 
 import com.thoughtworks.gauge.Step
+import com.thoughtworks.gauge.datastore.ScenarioDataStore
 import org.assertj.core.api.Condition
 import org.assertj.db.api.Assertions.*
 import org.assertj.db.type.Changes
@@ -21,6 +22,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class TaskDb {
+    private val allTables = arrayOf("tasks")
     private val databaseTester by lazy {
         JdbcDatabaseTester(
             Config.config[Config.taskDb.driverClass],
@@ -46,26 +48,35 @@ class TaskDb {
             Config.config[Config.taskDb.password]
         )
     }
+    private fun changes() = ScenarioDataStore.get("db_changes") as Changes
 
     fun setup(dir: String) {
         getDir(dir)?.let {
-
-            val dataSet = dataSet(it)
-            DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet)
+            truncate()
+            DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet(it))
         }
     }
 
-    fun truncate() {
-        DatabaseOperation.TRUNCATE_TABLE.execute(connection, connection.createDataSet(arrayOf("tasks")))
+    fun startWatchingChangedDb() {
+        val changes = Changes(source)
+        changes.setStartPointNow()
+        ScenarioDataStore.put("db_changes", changes)
+    }
+
+    private fun truncate() {
+        DatabaseOperation.TRUNCATE_TABLE.execute(connection, connection.createDataSet(allTables))
     }
 
     fun teardown() {
-        println("close db. $connection")
         connection?.close()
     }
 
     private fun getDir(dir: String): File? =
         this.javaClass.classLoader.getResource("$dir/task_db")?.let { File(it.toURI()) }
+
+    private fun getDirOrThrow(dir: String): File =
+        this.javaClass.classLoader.getResource("$dir/task_db")?.let { File(it.toURI()) }
+            ?: throw FileNotFoundException("[${dir}]ディレクトリが見つかりません")
 
     private fun dataSet(dir: File): IDataSet {
         // <now>を現在日時にしているがDBUnitの標準で[now]が使える。[now-2h]とかできるので標準を使うことを推奨
@@ -80,28 +91,18 @@ class TaskDb {
         return ReplacementDataSet(CsvDataSet(dir), replacedDataMap, partialReplacedDataMap)
     }
 
-    @Deprecated(
-        "「<table>テーブルを条件<where>で取得した<column>が〇〇であること」系のテストを推奨。理由は別ファイルに期待値を見に行かなくていいので可読性が上がる.",
-        replaceWith = ReplaceWith("tableテーブルを条件whereで取得したcolumnがvalueであること")
-    )
-    @Step("DBが<dirPath>通りになっていること")
-    fun assertTable(dirPath: String) {
-        val expectedDataSet =
-            getDir(dirPath)?.let(::dataSet) ?: throw FileNotFoundException("[${dirPath}]ディレクトリが見つかりません")
-        val actualDataSet = connection.createDataSet()
+    private fun dataSetOrThrow(dirPath: String): IDataSet = dataSet(getDirOrThrow(dirPath))
 
-        val iterator = expectedDataSet.iterator()
-        while (iterator.next()) {
-            val expectedTable = iterator.table
 
-            val expectedTableMeta = expectedTable.tableMetaData
-            val actualTable = DefaultColumnFilter.includedColumnsTable(
-                actualDataSet.getTable(expectedTableMeta.tableName),
-                expectedTableMeta.columns
-            )
+    @Step("DBに<dirPath>をCleanInsertする")
+    fun cleanInsert(dirPath: String) {
+        truncate()
+        DatabaseOperation.CLEAN_INSERT.execute(connection, dataSetOrThrow(dirPath))
+    }
 
-            Assertion.assertEquals(expectedTable, actualTable)
-        }
+    @Step("DBに<dirPath>をInsertする")
+    fun insert(dirPath: String) {
+        DatabaseOperation.INSERT.execute(connection, dataSetOrThrow(dirPath))
     }
 
     @Step("<table>テーブルを条件<where>で取得したレコード数が<count>であること")
@@ -158,29 +159,51 @@ class TaskDb {
             .`is`(Condition({ value: String -> regex.matches(value) }, "正規表現とマッチしていません。: $regex"))
     }
 
-    @Step("DB test")
-    fun testDb() {
-        println("db test")
-        val changes = Changes(source)
-        changes.setStartPointNow()
-        DatabaseOperation.INSERT.execute(connection, dataSet(getDir("setup/test")!!))
+    @Step("<table>テーブルに作成されたレコード数が<count>であること")
+    fun assertCreatedCount(table: String, count: Int){
+        val changes = changes()
         changes.setEndPointNow()
-
-//        assertThat(changes).hasNumberOfChanges(2)
-//            .ofCreationOnTable("task").hasNumberOfChanges(1)
-//            .changeOnTable("task").isCreation.rowAtEndPoint()
-//            .value("id").isEqualTo(3)
-//            .value("title").isEqualTo("test3")
-//            .value("created_at").isNotNull
-//            .ofCreationOnTable("demo").hasNumberOfChanges(1).changeOnTable("demo").isCreation
-
-        assertThat(changes).ofCreationOnTable("task").hasNumberOfChanges(1)
-            .changeOnTable("task").isCreation
-
-//        assertThat(changes).ofCreationOnTable("demo").hasNumberOfChanges(2)
-//            .changeOnTable("demo").isCreation
-
-//        assertThat(changes).ofModificationOnTable("task").hasNumberOfChanges(1).changeOnTable("demo").isModification
-//        assertThat(changes).ofDeletionOnTable("demo").hasNumberOfChanges(1).changeOnTable("demo").isDeletion
+        assertThat(changes).ofCreationOnTable(table).hasNumberOfChanges(count)
+            .changeOnTable(table).isCreation
     }
+
+    @Step("<table>テーブルに更新されたレコード数が<count>であること")
+    fun assertUpdatedCount(table: String, count: Int){
+        val changes = changes()
+        changes.setEndPointNow()
+        assertThat(changes).ofModificationOnTable(table).hasNumberOfChanges(count)
+            .changeOnTable(table).isModification
+    }
+
+    @Step("<table>テーブルに削除されたレコード数が<count>であること")
+    fun assertDeletedCount(table: String, count: Int){
+        val changes = changes()
+        changes.setEndPointNow()
+        assertThat(changes).ofDeletionOnTable(table).hasNumberOfChanges(count)
+            .changeOnTable(table).isDeletion
+    }
+
+    @Deprecated(
+        "「<table>テーブルを条件<where>で取得した<column>が〇〇であること」系のテストを推奨。理由は別ファイルに期待値を見に行かなくていいので可読性が上がる.",
+        replaceWith = ReplaceWith("tableテーブルを条件whereで取得したcolumnがvalueであること")
+    )
+    @Step("DBが<dirPath>通りになっていること")
+    fun assertTable(dirPath: String) {
+        val expectedDataSet = dataSetOrThrow(dirPath)
+        val actualDataSet = connection.createDataSet()
+
+        val iterator = expectedDataSet.iterator()
+        while (iterator.next()) {
+            val expectedTable = iterator.table
+
+            val expectedTableMeta = expectedTable.tableMetaData
+            val actualTable = DefaultColumnFilter.includedColumnsTable(
+                actualDataSet.getTable(expectedTableMeta.tableName),
+                expectedTableMeta.columns
+            )
+
+            Assertion.assertEquals(expectedTable, actualTable)
+        }
+    }
+
 }
