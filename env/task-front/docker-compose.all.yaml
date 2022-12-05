@@ -10,5 +10,10 @@ services:
 
   api:
     extends:
-      file: docker-compose.deps.yaml
+      file: "../task-api/docker-compose.e2e.yaml"
       service: api
+
+  db:
+    extends:
+      file: "../task-api/docker-compose.e2e.yaml"
+      service: db

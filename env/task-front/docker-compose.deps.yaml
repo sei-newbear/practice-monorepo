@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  api:
+    build:
+      context: ./deps/task-api
+      dockerfile: Dockerfile
+    ports:
+      - 8089:8089

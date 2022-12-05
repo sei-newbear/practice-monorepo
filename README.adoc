@@ -19,7 +19,7 @@
 [source, sh]
 ----
 cd env/task-api
-./run_api_mock.sh
+docker-compose -f docker-compose.deps.yaml up -d
 ----
 
 ### front
@@ -49,7 +49,7 @@ IntelliJにGaugeプラグインを入れると、UIからテスト実行も可�
 
 ## 構成
 - front: SvelteKit Typescript (VsCodeで編集)
-- API: Wiremock(あとで変える予定)
+- API: Golang (VsCodeで編集)
 - E2E: Gauge Kotlin (IntelliJで編集)
 
 ## Tips
@@ -62,7 +62,6 @@ IntelliJにGaugeプラグインを入れると、UIからテスト実行も可�
 ----
 cd env/task-front
 docker-compose up -d
-
 ----
 
 #### e2e実行
@@ -72,6 +71,13 @@ cd e2e
 mvn clean test
 ----
 
+### mockを使わずにすべて起動する方法
+
+[source, sh]
+----
+cd env/task-front
+docker-compose -f docker-compose.all.yaml up -d
+----
 
 ## TODO
 * [x] APIを作成する

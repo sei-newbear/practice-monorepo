@@ -11,17 +11,36 @@
 	};
 
 	export let tasks: Tasks = {total:0, tasks: []};
+	let title = "";
+	let createdTask: {id: number} = {id: 0};
 
-	onMount(async () => {
-		const response = fetch(`http://localhost:8089/tasks`, {
+	async function getTasks() {
+		const response = await fetch(`http://localhost:8089/v1/tasks`, {
 			method: 'GET',
 			headers: {
 				'content-type': 'application/json'
 			}
 		});
 
-		tasks = await (await response).json();
+		tasks = await response.json();
+	}
+	onMount(async () => {
+		await getTasks();
 	});
+
+
+	async function doPost() {
+		const response = await fetch(`http://localhost:8089/v1/tasks`, {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json'
+			},
+			body: JSON.stringify({title})
+		})
+
+		createdTask = await response.json()
+		await getTasks();
+	}
 </script>
 
 <svelte:head>
@@ -30,6 +49,9 @@
 
 <div class="tasks">
 	<h1>Tasks</h1>
+	<input bind:value={title} class="title">
+	<button type="button" on:click={doPost} class="submit">送信</button>
+	{createdTask.id}
 
 	{#each tasks.tasks as task}
 		<div class="task">
