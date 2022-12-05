@@ -1,5 +1,6 @@
 import com.github.kittinunf.fuel.core.ResponseResultOf
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPost
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.PathNotFoundException
 import com.thoughtworks.gauge.Step
@@ -54,6 +55,12 @@ class ApiTest {
         saveResponse(response)
     }
 
+    @Step("<path>へ<json>でPOSTリクエストする")
+    fun requestPost(path: String, json: String){
+        val url = "${baseUrl}/${path}"
+        val response = url.httpPost().body(json).response()
+        saveResponse(response)
+    }
     @Step("ステータスコードが<code>であること")
     fun equalStatusCode(code: Int){
         getStatusCode() shouldBe code
@@ -85,6 +92,14 @@ class ApiTest {
             jsonValue shouldHave haveSize(length)
         }else{
             throw IllegalArgumentException("「${jsonpath}」は配列ではありません。値: $jsonValue")
+        }
+    }
+
+    @Step("<jsonpath>の値が整数であること")
+    fun assertJsonIsNumber(jsonpath: String){
+        val jsonValue = getJsonValue(jsonpath)
+        if(jsonValue !is Int){
+            fail("「${jsonpath}」は整数ではありません。値: $jsonValue")
         }
     }
 

@@ -15,8 +15,9 @@ import org.dbunit.dataset.ReplacementDataSet
 import org.dbunit.dataset.csv.CsvDataSet
 import org.dbunit.dataset.filter.DefaultColumnFilter
 import org.dbunit.operation.DatabaseOperation
+import setup.FileOperator.Companion.getDir
+import setup.FileOperator.Companion.getDirOrThrow
 import java.io.File
-import java.io.FileNotFoundException
 import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -48,6 +49,7 @@ class TaskDb {
             Config.config[Config.taskDb.password]
         )
     }
+
     private fun changes() = ScenarioDataStore.get("db_changes") as Changes
 
     fun setup(dir: String) {
@@ -71,13 +73,6 @@ class TaskDb {
         connection?.close()
     }
 
-    private fun getDir(dir: String): File? =
-        this.javaClass.classLoader.getResource("$dir/task_db")?.let { File(it.toURI()) }
-
-    private fun getDirOrThrow(dir: String): File =
-        this.javaClass.classLoader.getResource("$dir/task_db")?.let { File(it.toURI()) }
-            ?: throw FileNotFoundException("[${dir}]ディレクトリが見つかりません")
-
     private fun dataSet(dir: File): IDataSet {
         // <now>を現在日時にしているがDBUnitの標準で[now]が使える。[now-2h]とかできるので標準を使うことを推奨
         // https://oita.oika.me/2021/10/21/dbunit-relative-date
@@ -92,18 +87,6 @@ class TaskDb {
     }
 
     private fun dataSetOrThrow(dirPath: String): IDataSet = dataSet(getDirOrThrow(dirPath))
-
-
-    @Step("DBに<dirPath>をCleanInsertする")
-    fun cleanInsert(dirPath: String) {
-        truncate()
-        DatabaseOperation.CLEAN_INSERT.execute(connection, dataSetOrThrow(dirPath))
-    }
-
-    @Step("DBに<dirPath>をInsertする")
-    fun insert(dirPath: String) {
-        DatabaseOperation.INSERT.execute(connection, dataSetOrThrow(dirPath))
-    }
 
     @Step("<table>テーブルを条件<where>で取得したレコード数が<count>であること")
     fun assertRecordCount(table: String, where: String, count: Int) {
@@ -160,7 +143,7 @@ class TaskDb {
     }
 
     @Step("<table>テーブルに作成されたレコード数が<count>であること")
-    fun assertCreatedCount(table: String, count: Int){
+    fun assertCreatedCount(table: String, count: Int) {
         val changes = changes()
         changes.setEndPointNow()
         assertThat(changes).ofCreationOnTable(table).hasNumberOfChanges(count)
@@ -168,7 +151,7 @@ class TaskDb {
     }
 
     @Step("<table>テーブルに更新されたレコード数が<count>であること")
-    fun assertUpdatedCount(table: String, count: Int){
+    fun assertUpdatedCount(table: String, count: Int) {
         val changes = changes()
         changes.setEndPointNow()
         assertThat(changes).ofModificationOnTable(table).hasNumberOfChanges(count)
@@ -176,7 +159,7 @@ class TaskDb {
     }
 
     @Step("<table>テーブルに削除されたレコード数が<count>であること")
-    fun assertDeletedCount(table: String, count: Int){
+    fun assertDeletedCount(table: String, count: Int) {
         val changes = changes()
         changes.setEndPointNow()
         assertThat(changes).ofDeletionOnTable(table).hasNumberOfChanges(count)
