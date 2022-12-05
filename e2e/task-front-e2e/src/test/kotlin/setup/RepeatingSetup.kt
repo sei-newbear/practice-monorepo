@@ -3,8 +3,8 @@ package setup
 import com.thoughtworks.gauge.BeforeSuite
 
 @Suppress("unused")
-class Setup {
-    val taskApi: TaskApi by lazy { TaskApi() }
+class RepeatingSetup {
+    private val taskApi: TaskApi by lazy { TaskApi() }
 
     @BeforeSuite
     fun setup(){

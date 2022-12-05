@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/v1/tasks"
+  },
+  "response": {
+    "status": 201,
+    "jsonBody": {
+      "id": 11
+    },
+    "headers":{
+      "content-type": "application/json"
+    }
+  }
+}

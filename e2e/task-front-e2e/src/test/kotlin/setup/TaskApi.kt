@@ -1,6 +1,8 @@
 package setup
 
 import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.thoughtworks.gauge.Step
 import java.io.File
 
 class TaskApi {
@@ -12,5 +14,12 @@ class TaskApi {
             taskApi.resetMappings()
             taskApi.loadMappingsFrom(file)
         }
+    }
+
+    @Step("タスクAPIの<path>へ<jsonpath>に<value>をPOSTリクエストしていること")
+    fun assert(path: String, jsonpath: String, value: String) {
+        // TODO mockをシナリオごとに初期化しないとテスト増やすと落ちるかも
+        taskApi.verifyThat(postRequestedFor(urlEqualTo(path))
+            .withRequestBody(matchingJsonPath(jsonpath, equalTo(value))))
     }
 }

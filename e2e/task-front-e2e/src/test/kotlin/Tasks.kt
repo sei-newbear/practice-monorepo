@@ -22,4 +22,16 @@ class Tasks {
     fun displayTasksTitle(index: Int, title: String){
         `$$`(".task")[index -1].`$`(".title").shouldHave(exactText(title))
     }
+
+    @Step("タイトルに<title>と入力する")
+    fun inputTitle(title: String){
+        val titleInput = `$`(".title")
+        titleInput.clear()
+        titleInput.sendKeys(title)
+    }
+
+    @Step("送信ボタンを押下する")
+    fun clickSubmitButton() {
+        `$`(".submit").click()
+    }
 }
