@@ -58,7 +58,7 @@ class ApiTest {
     @Step("<path>へ<json>でPOSTリクエストする")
     fun requestPost(path: String, json: String){
         val url = "${baseUrl}/${path}"
-        val response = url.httpPost().body(json).response()
+        val response = url.httpPost().header(mapOf("content-type" to "application/json")).body(json).response()
         saveResponse(response)
     }
     @Step("ステータスコードが<code>であること")

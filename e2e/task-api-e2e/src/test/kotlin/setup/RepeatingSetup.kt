@@ -27,10 +27,10 @@ class RepeatingSetup {
         val scenarioName = context.currentScenario.name
         val specDir = context.currentSpecification.fileName
 
-        val specFilePath = specDir.replace("${workingDir}${File.separator}specs${File.separator}", "")
+        val specFilePath = specDir.replace(listOf(workingDir, "specs").joinToString(File.separator, postfix = File.separator), "").replace(".spec", "")
         val scenarioPath = scenarioName.split("--").map { it.trim() }.last()
 
-        val setupPath = "${specFilePath}${File.separator}${scenarioPath}"
+        val setupPath = listOf("setup_watch_change_data", specFilePath, scenarioPath).joinToString(File.separator)
         println("${setupPath}ディレクトリを元にテストデータをセットアップします。")
 
         taskDb.setup(setupPath)
