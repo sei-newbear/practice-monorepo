@@ -10,6 +10,8 @@ RUN go mod download
 
 COPY . ./
 
+RUN go test ./...
+
 RUN go build -o /task-api
 
 
