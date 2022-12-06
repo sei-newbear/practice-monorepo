@@ -11,6 +11,19 @@ type taskGateway struct {
 	taskDriver driver.TaskDriver
 }
 
+func (tg *taskGateway) Save(ctx context.Context, task domain.Task) (domain.Task, error) {
+
+	taskTable := driver.TaskTable{Title: task.Title}
+	createdTask, err := tg.taskDriver.Save(ctx, taskTable)
+
+	if err != nil {
+		return domain.Task{}, err
+	}
+
+	return domain.Task{Id: createdTask.Id, Title: createdTask.Title}, nil
+
+}
+
 func NewTaskPort(taskDriver driver.TaskDriver) port.TaskPort {
 	return &taskGateway{
 		taskDriver: taskDriver,

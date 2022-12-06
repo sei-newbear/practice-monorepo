@@ -1,8 +1,5 @@
 version: '3.7'
 
-volumes:
-  task-db-data:
-
 services:
   api:
     build:

@@ -35,8 +35,14 @@ func (th *TaskHandler) getTasks(c *gin.Context) {
 func (th *TaskHandler) createTask(c *gin.Context) {
 	var rt RequestTaskJson
 	c.Bind(&rt)
-	task := TaskJson{1, rt.Title}
-	c.JSON(200, task)
+	task, err := th.TaskUseCase.Create(c.Request.Context(), domain.Task{Title: rt.Title})
+	if err != nil {
+		c.JSON(500, err)
+		return
+	}
+
+	taskJson := createTaskJson(task)
+	c.JSON(201, taskJson)
 }
 
 func createTaskJson(t domain.Task) TaskJson {

@@ -19,7 +19,7 @@
 [source, sh]
 ----
 cd env/task-api
-docker-compose -f docker-compose.deps.yaml up -d
+docker-compose -f docker-compose.deps.yaml up --build
 ----
 
 ### front
@@ -61,7 +61,7 @@ IntelliJにGaugeプラグインを入れると、UIからテスト実行も可�
 [source, sh]
 ----
 cd env/task-front
-docker-compose up -d
+docker-compose up --build
 ----
 
 #### e2e実行
@@ -76,7 +76,7 @@ mvn clean test
 [source, sh]
 ----
 cd env/task-front
-docker-compose -f docker-compose.all.yaml up -d
+docker-compose -f docker-compose.all.yaml up --build
 ----
 
 ## TODO

@@ -18,14 +18,32 @@ func (_m *mockTaskPort) FindAll(ctx context.Context) ([]domain.Task, error) {
 	return ret.Get(0).([]domain.Task), ret.Error(1)
 }
 
+func (_m *mockTaskPort) Save(ctx context.Context, task domain.Task) (domain.Task, error) {
+	ret := _m.Called(ctx, task)
+	return ret.Get(0).(domain.Task), ret.Error(1)
+}
+
 func TestTaskUseCase_GetTasks(t *testing.T) {
 	mockTaskPort := new(mockTaskPort)
-	mockTaskPort.On("FindAll", context.Background()).Return([]domain.Task{}, nil)
+	expected := []domain.Task{}
+	ctx := context.Background()
+	mockTaskPort.On("FindAll", ctx).Return(expected, nil)
 	target := TaskUseCase{TaskPort: mockTaskPort}
-	actual, err := target.GetTasks(context.Background())
+	actual, err := target.GetTasks(ctx)
 
-	assert.Equal(t, actual, []domain.Task{})
+	assert.Equal(t, expected, actual)
 	assert.NoError(t, err)
 	mockTaskPort.AssertExpectations(t)
+}
 
+func TestTaskUseCase_Create(t *testing.T) {
+	mockTaskPort := new(mockTaskPort)
+	ctx := context.Background()
+	expected := domain.Task{}
+	mockTaskPort.On("Save", ctx, domain.Task{}).Return(expected, nil)
+	target := TaskUseCase{mockTaskPort}
+	actual, err := target.Create(ctx, expected)
+	assert.Equal(t, expected, actual)
+	assert.NoError(t, err)
+	mockTaskPort.AssertExpectations(t)
 }

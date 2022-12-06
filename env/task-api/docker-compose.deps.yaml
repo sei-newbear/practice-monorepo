@@ -1,15 +1,18 @@
 version: '3.7'
 
-volumes:
-  task-db-data:
+# volumes:
+#   task-db-data:
 
 services:
   db:
     build: 
       context: ./deps/task-db/
       dockerfile: Dockerfile
-    restart: unless-stopped
-    volumes:
-      - task-db-data:/var/lib/postgresql/data
+    # E2Eでテストデータを用意するのでマウント不要な気がする
+    # restart: unless-stopped
+    # volumes:
+    #   - task-db-data:/var/lib/postgresql/data
+    environment:
+        TZ: "Asia/Tokyo"
     ports:
       - 5432:5432

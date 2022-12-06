@@ -20,6 +20,16 @@ func main() {
 		AllowOrigins: []string{
 			"*",
 		},
+		AllowMethods: []string{
+			"OPTIONS",
+			"GET",
+			"POST",
+			"PUT",
+			"DELETE",
+		},
+		AllowHeaders: []string{
+			"Content-Type",
+		},
 	}))
 	rest.RouteHealth(engine)
 	rest.RouteTask(engine, InitTaskHandler())
